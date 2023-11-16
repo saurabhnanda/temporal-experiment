@@ -3,6 +3,8 @@
  */
 package otp.temporal;
 
+import com.uber.m3.util.Duration;
+
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
@@ -15,7 +17,7 @@ public class App {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
         WorkflowClient client = WorkflowClient.newInstance(service);
         WorkerFactory factory = WorkerFactory.newInstance(client);
@@ -31,6 +33,7 @@ public class App {
         OtpWorkflow workflow = client.newWorkflowStub(OtpWorkflow.class, options);
 
         WorkflowClient.start(workflow::initiateOtpLogin, "+919876543210");
+        Thread.sleep(5000);
         // workflow.initiateOtpLogin("+919876543210");
 
         workflow.resendOtp();

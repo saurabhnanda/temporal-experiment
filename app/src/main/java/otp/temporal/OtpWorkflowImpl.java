@@ -24,6 +24,8 @@ public class OtpWorkflowImpl implements OtpWorkflow {
     private final OtpActivities activities = Workflow.newActivityStub(
         OtpActivities.class,
         ActivityOptions.newBuilder()
+            .setStartToCloseTimeout(Duration.ofSeconds(10))
+            .setScheduleToCloseTimeout(Duration.ofSeconds(60))
             .setRetryOptions(
                 RetryOptions.newBuilder()
                     .setInitialInterval(Duration.ofSeconds(5))

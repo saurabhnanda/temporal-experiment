@@ -10,6 +10,9 @@ import io.temporal.client.WorkflowOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
+import java.util.Vector;
+import java.util.HashSet;
+import java.time.Instant;
 
 public class App {
     public String getGreeting() {
@@ -36,10 +39,20 @@ public class App {
         OtpWorkflow workflow = client.newWorkflowStub(OtpWorkflow.class, options);
 
         WorkflowClient.start(workflow::initiateOtpLogin, "+919876543210");
-        Thread.sleep(5000);
         // workflow.initiateOtpLogin("+919876543210");
+        // Thread.sleep(5000);
 
-        workflow.resendOtp();
+        Vector<Pair<Boolean, Instant>> v = new Vector<>(1000);
+        for(int i=0; i<1000; i++) {
+            new Thread(() -> { v.add(workflow.resendOtp()); }).start();
+        }
+
+        Thread.sleep(10000);
+
+        HashSet<Pair<Boolean, Instant>> s = new HashSet<>();
+        s.addAll(v);
+        System.out.println("unique values = " + s.toString());
+        
 
         // System.out.println("the generated otp is " + workflow.initiateOtpLogin("+91 98765 43210"));
 

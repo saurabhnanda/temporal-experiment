@@ -44,12 +44,24 @@ public class OtpWorkflowImpl implements OtpWorkflow {
         return  (customerStatus.get() == CustomerStatus.SHADOWBANNED) ? CustomerStatus.ACTIVE : customerStatus.get();
     }
 
+    private CustomerStatus getCustomerStatus() {
+        if(customerStatus==null) {
+            customerStatus = Async.function(activities::getCustomerStatus, phone);
+        }
+
+        return customerStatus.get();
+    }
+
+    private CustomerStatus getPublicCustomerStatus() {
+        if(publicCustomerStatus==null) {
+            publicCustomerStatus = Async.function(this::calculatePublicCustomerStatus);
+        }
+
+        return publicCustomerStatus.get();
+    }
 
     public void initiateOtpLogin(String phone) {
         this.phone = phone;
-
-        customerStatus = Async.function(activities::getCustomerStatus, phone);
-        publicCustomerStatus = Async.function(this::calculatePublicCustomerStatus);
 
         // this.customerStatus = activities.getCustomerStatus(phone);
         this.resendAfter = Instant.now().minus(Duration.ofSeconds(10));
@@ -68,14 +80,14 @@ public class OtpWorkflowImpl implements OtpWorkflow {
     }
 
     public Triplet<Boolean, Instant, CustomerStatus> resendOtp() {
-        if(customerStatus.get()==CustomerStatus.BLOCKED) {
-            return new Triplet<>(Boolean.FALSE, null, publicCustomerStatus.get());
+        if(getCustomerStatus()==CustomerStatus.BLOCKED) {
+            return new Triplet<>(Boolean.FALSE, null, getPublicCustomerStatus());
         }
 
-        if(customerStatus.get()!=CustomerStatus.SHADOWBANNED) {
+        if(getCustomerStatus()!=CustomerStatus.SHADOWBANNED) {
             Instant now = Instant.now();
             if(now.isBefore(resendAfter)) {
-                return new Triplet<>(Boolean.FALSE, resendAfter, publicCustomerStatus.get());
+                return new Triplet<>(Boolean.FALSE, resendAfter, getPublicCustomerStatus());
             }
 
             if(now.isAfter(otpValidTill)) {
@@ -87,7 +99,7 @@ public class OtpWorkflowImpl implements OtpWorkflow {
             activities.deliverOtp(phone, currentOtp);
         }
 
-        return new Triplet<>(Boolean.TRUE, resendAfter, publicCustomerStatus.get());
+        return new Triplet<>(Boolean.TRUE, resendAfter, getPublicCustomerStatus());
     }
 
     @Override

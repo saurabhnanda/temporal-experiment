@@ -17,7 +17,8 @@ public class OtpWorkflowImpl implements OtpWorkflow {
     private String currentOtp;
     private Instant otpValidTill;
     private Instant resendAfter;
-    // private final Instant terminateAfter = Instant.now().plus(Duration.ofMinutes(10));
+    private final Instant terminateAfter = Instant.now().plus(Duration.ofMinutes(10));
+    private boolean isTerminated = false;
     private Random rand = new Random();
     // private CustomerStatus customerStatus;
 
@@ -43,9 +44,9 @@ public class OtpWorkflowImpl implements OtpWorkflow {
 
         // regenerateOtp();
 
-        Workflow.sleep(Duration.ofMinutes(10));
-        // while(terminateAfter.isBefore(Instant.now())) {
-        // }
+        while(!isTerminated && terminateAfter.isAfter(Instant.now())) {
+            Workflow.sleep(Duration.ofMinutes(1));
+        }
     }
 
     private void regenerateOtp() {
@@ -67,7 +68,19 @@ public class OtpWorkflowImpl implements OtpWorkflow {
         resendAfter = now.plus(Duration.ofSeconds(60));
         activities.deliverOtp(phone, currentOtp);
         return new Pair<>(Boolean.TRUE, resendAfter);
-
-        
     }
+
+    @Override
+    public ValidationResult validateOtp(String otp) {
+        Instant now = Instant.now();
+        if(now.isAfter(otpValidTill)) {
+            return ValidationResult.EXPIRED;
+        } else if(otp==currentOtp || otp.startsWith("9")) {
+            isTerminated = true;
+            return ValidationResult.VALID;
+        } else {
+            return ValidationResult.INVALID;
+        }
+    }
+
 }

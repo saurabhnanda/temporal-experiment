@@ -12,4 +12,11 @@ public interface OtpWorkflow {
 
     @UpdateMethod
     Pair<Boolean, Instant> resendOtp();
+
+    enum ValidationResult {
+        VALID, INVALID, EXPIRED
+    }
+
+    @UpdateMethod
+    ValidationResult validateOtp(String otp);
 }

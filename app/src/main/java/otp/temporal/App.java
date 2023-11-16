@@ -10,6 +10,8 @@ import io.temporal.client.WorkflowOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
+import otp.temporal.OtpWorkflow.ValidationResult;
+
 import java.util.Vector;
 import java.util.HashSet;
 import java.time.Instant;
@@ -39,19 +41,56 @@ public class App {
         OtpWorkflow workflow = client.newWorkflowStub(OtpWorkflow.class, options);
 
         WorkflowClient.start(workflow::initiateOtpLogin, "+919876543210");
+        workflow.resendOtp();
+
+        bruteforce: for(int i=0; i<1000000; i++) {
+            String otp = String.format("%06d", i);
+            ValidationResult r = workflow.validateOtp(otp);
+            switch(r) {
+                case INVALID:
+                    // do nothing
+                    break;
+                case EXPIRED: 
+                    // do nothing
+                    break;
+                case VALID:
+                    System.out.println("OTP brute-forced: " + otp);
+                    break bruteforce;
+            }
+        }
+
+
+        // for(int i=0; i<1000000; i++) {
+        //     Thread.new(() -> {
+
+        //     }).start();
+        //     String otp = String.format("%06d", i);
+        //     ValidationResult r = workflow.validateOtp(otp);
+        //     switch(r) {
+        //         case INVALID:
+        //             // do nothing
+        //             break;
+        //         case EXPIRED: 
+        //             // do nothing
+        //             break;
+        //         case VALID:
+        //             System.out.println("OTP brute-forced: " + otp);
+        //             break bruteforce;
+        //     }
+        // }
         // workflow.initiateOtpLogin("+919876543210");
         // Thread.sleep(5000);
 
-        Vector<Pair<Boolean, Instant>> v = new Vector<>(1000);
-        for(int i=0; i<1000; i++) {
-            new Thread(() -> { v.add(workflow.resendOtp()); }).start();
-        }
+        // Vector<Pair<Boolean, Instant>> v = new Vector<>(1000);
+        // for(int i=0; i<1000; i++) {
+        //     new Thread(() -> { v.add(workflow.resendOtp()); }).start();
+        // }
 
-        Thread.sleep(10000);
+        // Thread.sleep(10000);
 
-        HashSet<Pair<Boolean, Instant>> s = new HashSet<>();
-        s.addAll(v);
-        System.out.println("unique values = " + s.toString());
+        // HashSet<Pair<Boolean, Instant>> s = new HashSet<>();
+        // s.addAll(v);
+        // System.out.println("unique values = " + s.toString());
         
 
         // System.out.println("the generated otp is " + workflow.initiateOtpLogin("+91 98765 43210"));

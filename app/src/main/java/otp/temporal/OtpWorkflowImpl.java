@@ -3,6 +3,8 @@ package otp.temporal;
 import java.time.Instant;
 import java.util.Random;
 
+import com.google.gson.InstanceCreator;
+
 import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
 import io.temporal.workflow.Workflow;
@@ -15,6 +17,7 @@ public class OtpWorkflowImpl implements OtpWorkflow {
     private String currentOtp;
     private Instant otpValidTill;
     private Instant resendAfter;
+    // private final Instant terminateAfter = Instant.now().plus(Duration.ofMinutes(10));
     private Random rand = new Random();
     // private CustomerStatus customerStatus;
 
@@ -33,10 +36,14 @@ public class OtpWorkflowImpl implements OtpWorkflow {
     public void initiateOtpLogin(String phone) {
         this.phone = phone;
         // this.customerStatus = activities.getCustomerStatus(phone);
-        this.resendAfter = Instant.now();
+        this.resendAfter = Instant.now().minus(Duration.ofSeconds(10));
+        this.otpValidTill = Instant.now().minus(Duration.ofSeconds(10));
 
-        regenerateOtp();
-        // return this.currentOtp;
+        // regenerateOtp();
+
+        Workflow.sleep(Duration.ofMinutes(10));
+        // while(terminateAfter.isBefore(Instant.now())) {
+        // }
     }
 
     private void regenerateOtp() {

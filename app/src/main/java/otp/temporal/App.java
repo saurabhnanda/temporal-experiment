@@ -23,7 +23,10 @@ public class App {
         WorkerFactory factory = WorkerFactory.newInstance(client);
         Worker worker = factory.newWorker("default");
         worker.registerWorkflowImplementationTypes(OtpWorkflowImpl.class);
+        worker.registerActivitiesImplementations(new OtpActivitiesImpl());
         factory.start();
+
+
 
         WorkflowOptions options = WorkflowOptions.newBuilder()
             // .setWorkflowId(WORKFLOW_ID)

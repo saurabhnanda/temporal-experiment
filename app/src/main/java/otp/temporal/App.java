@@ -29,8 +29,11 @@ public class App {
             .build();
 
         OtpWorkflow workflow = client.newWorkflowStub(OtpWorkflow.class, options);
+        workflow.initiateOtpLogin("+919876543210");
+        workflow.resendOtp();
 
-        System.out.println("the generated otp is " + workflow.initiateOtpLogin("+91 98765 43210"));
+        // System.out.println("the generated otp is " + workflow.initiateOtpLogin("+91 98765 43210"));
+
         System.exit(0);
     }
 }

@@ -24,24 +24,24 @@ public class OtpActivitiesImpl implements OtpActivities {
         }
     }
 
-    // public CustomerStatus getCustomerStatus(String phone) {
-    //     try {
-    //         HttpClient client = HttpClient.newHttpClient();
-    //         HttpRequest req = HttpRequest.newBuilder(URI.create("https://eoho4fa4rawga50.m.pipedream.net?phoneNumber=" + phone)).build();
-    //         String body = client.send(req, HttpResponse.BodyHandlers.ofString()).body();
-    //         if(body.equalsIgnoreCase("new")) {
-    //             return CustomerStatus.NEW;
-    //         } else if (body.equalsIgnoreCase("active")) {
-    //             return CustomerStatus.ACTIVE;
-    //         } else if (body.equalsIgnoreCase("blocked")) {
-    //             return CustomerStatus.BLOCKED;
-    //         } else if (body.equalsIgnoreCase("shadowbanned")) {
-    //             return CustomerStatus.SHADOWBANNED;
-    //         } 
+    public CustomerStatus getCustomerStatus(String phone) {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest req = HttpRequest.newBuilder(URI.create("https://eoho4fa4rawga50.m.pipedream.net?phoneNumber=" + phone)).build();
+            String body = client.send(req, HttpResponse.BodyHandlers.ofString()).body();
+            if(body.equalsIgnoreCase("new")) {
+                return CustomerStatus.NEW;
+            } else if (body.equalsIgnoreCase("active")) {
+                return CustomerStatus.ACTIVE;
+            } else if (body.equalsIgnoreCase("blocked")) {
+                return CustomerStatus.BLOCKED;
+            } else if (body.equalsIgnoreCase("shadowbanned")) {
+                return CustomerStatus.SHADOWBANNED;
+            } 
 
-    //         throw new RuntimeException("Unhandled customer status = " + body);
-    //     } catch (Exception e) {
-    //         throw Activity.wrap(e);
-    //     }
-    // }
+            throw new RuntimeException("Unhandled customer status = " + body);
+        } catch (Exception e) {
+            throw Activity.wrap(e);
+        }
+    }
 }

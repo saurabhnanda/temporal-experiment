@@ -41,23 +41,23 @@ public class App {
         OtpWorkflow workflow = client.newWorkflowStub(OtpWorkflow.class, options);
 
         WorkflowClient.start(workflow::initiateOtpLogin, "+919876543210");
-        workflow.resendOtp();
+        System.out.println("Resend OTP result " + workflow.resendOtp());
 
-        bruteforce: for(int i=0; i<1000000; i++) {
-            String otp = String.format("%06d", i);
-            ValidationResult r = workflow.validateOtp(otp);
-            switch(r) {
-                case INVALID:
-                    // do nothing
-                    break;
-                case EXPIRED: 
-                    // do nothing
-                    break;
-                case VALID:
-                    System.out.println("OTP brute-forced: " + otp);
-                    break bruteforce;
-            }
-        }
+        // bruteforce: for(int i=0; i<1000000; i++) {
+        //     String otp = String.format("%06d", i);
+        //     ValidationResult r = workflow.validateOtp(otp);
+        //     switch(r) {
+        //         case INVALID:
+        //             // do nothing
+        //             break;
+        //         case EXPIRED: 
+        //             // do nothing
+        //             break;
+        //         case VALID:
+        //             System.out.println("OTP brute-forced: " + otp);
+        //             break bruteforce;
+        //     }
+        // }
 
 
         // for(int i=0; i<1000000; i++) {

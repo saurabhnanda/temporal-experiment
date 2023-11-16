@@ -27,6 +27,9 @@ public class Triplet<A, B, C> {
     }
 
     public String toString() {
-        return "<" + first.toString() + ", " + second.toString() + ", " + third.toString() + ">";
+        return "<" + 
+            (first==null ? null : first.toString()) + ", " + 
+            (second==null ? null : second.toString()) + ", " + 
+            (third==null ? null : third.toString()) + ">";
     }
 }

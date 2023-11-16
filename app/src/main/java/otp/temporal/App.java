@@ -40,7 +40,8 @@ public class App {
 
         OtpWorkflow workflow = client.newWorkflowStub(OtpWorkflow.class, options);
 
-        WorkflowClient.start(workflow::initiateOtpLogin, "+919876543210");
+        WorkflowClient.start(workflow::initiateOtpLogin, "2876543210");
+        Thread.sleep(5000);
         System.out.println("Resend OTP result " + workflow.resendOtp());
 
         // bruteforce: for(int i=0; i<1000000; i++) {

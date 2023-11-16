@@ -22,6 +22,8 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
+
+    implementation(group="io.temporal", name="temporal-sdk", version="1.22.3")
 }
 
 application {

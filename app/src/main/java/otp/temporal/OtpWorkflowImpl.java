@@ -64,8 +64,8 @@ public class OtpWorkflowImpl implements OtpWorkflow {
         }
 
         // TODO - make this async
+        resendAfter = now.plus(Duration.ofSeconds(60));
         activities.deliverOtp(phone, currentOtp);
-        resendAfter = now.plus(Duration.ofMinutes(60));
         return new Pair<>(Boolean.TRUE, resendAfter);
 
         
